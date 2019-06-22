@@ -5,16 +5,16 @@ class HomePageContextModel {
   ToShareCode toShareCode;
   List<Recommend> recommend;
   AdvertesPicture advertesPicture;
-  List<Floor1> floor1;
-  List<Floor2> floor2;
-  List<Floor3> floor3;
+  List<Floor> floor1;
+  List<Floor> floor2;
+  List<Floor> floor3;
   Saoma saoma;
   NewUser newUser;
-  Floor1Pic floor1Pic;
-  Floor2Pic floor2Pic;
+  FloorPic floor1Pic;
+  FloorPic floor2Pic;
+  FloorPic floor3Pic;
   FloorName floorName;
   List<Category> category;
-  Floor3Pic floor3Pic;
   List<Null> reservationGoods;
 
   HomePageContextModel({this.slides,
@@ -61,31 +61,31 @@ class HomePageContextModel {
         ? new AdvertesPicture.fromJson(json['advertesPicture'])
         : null;
     if (json['floor1'] != null) {
-      floor1 = new List<Floor1>();
+      floor1 = new List<Floor>();
       json['floor1'].forEach((v) {
-        floor1.add(new Floor1.fromJson(v));
+        floor1.add(new Floor.fromJson(v));
       });
     }
     if (json['floor2'] != null) {
-      floor2 = new List<Floor2>();
+      floor2 = new List<Floor>();
       json['floor2'].forEach((v) {
-        floor2.add(new Floor2.fromJson(v));
+        floor2.add(new Floor.fromJson(v));
       });
     }
     if (json['floor3'] != null) {
-      floor3 = new List<Floor3>();
+      floor3 = new List<Floor>();
       json['floor3'].forEach((v) {
-        floor3.add(new Floor3.fromJson(v));
+        floor3.add(new Floor.fromJson(v));
       });
     }
     saoma = json['saoma'] != null ? new Saoma.fromJson(json['saoma']) : null;
     newUser =
     json['newUser'] != null ? new NewUser.fromJson(json['newUser']) : null;
     floor1Pic = json['floor1Pic'] != null
-        ? new Floor1Pic.fromJson(json['floor1Pic'])
+        ? new FloorPic.fromJson(json['floor1Pic'])
         : null;
     floor2Pic = json['floor2Pic'] != null
-        ? new Floor2Pic.fromJson(json['floor2Pic'])
+        ? new FloorPic.fromJson(json['floor2Pic'])
         : null;
     floorName = json['floorName'] != null
         ? new FloorName.fromJson(json['floorName'])
@@ -97,7 +97,7 @@ class HomePageContextModel {
       });
     }
     floor3Pic = json['floor3Pic'] != null
-        ? new Floor3Pic.fromJson(json['floor3Pic'])
+        ? new FloorPic.fromJson(json['floor3Pic'])
         : null;
   }
 
@@ -279,51 +279,13 @@ class AdvertesPicture {
   }
 }
 
-class Floor1 {
+class Floor {
   String image;
   String goodsId;
 
-  Floor1({this.image, this.goodsId});
+  Floor({this.image, this.goodsId});
 
-  Floor1.fromJson(Map<String, dynamic> json) {
-    image = json['image'];
-    goodsId = json['goodsId'];
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['image'] = this.image;
-    data['goodsId'] = this.goodsId;
-    return data;
-  }
-}
-
-class Floor2 {
-  String image;
-  String goodsId;
-
-  Floor2({this.image, this.goodsId});
-
-  Floor2.fromJson(Map<String, dynamic> json) {
-    image = json['image'];
-    goodsId = json['goodsId'];
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['image'] = this.image;
-    data['goodsId'] = this.goodsId;
-    return data;
-  }
-}
-
-class Floor3 {
-  String image;
-  String goodsId;
-
-  Floor3({this.image, this.goodsId});
-
-  Floor3.fromJson(Map<String, dynamic> json) {
+  Floor.fromJson(Map<String, dynamic> json) {
     image = json['image'];
     goodsId = json['goodsId'];
   }
@@ -374,13 +336,13 @@ class NewUser {
   }
 }
 
-class Floor1Pic {
+class FloorPic {
   String pICTUREADDRESS;
   String tOPLACE;
 
-  Floor1Pic({this.pICTUREADDRESS, this.tOPLACE});
+  FloorPic({this.pICTUREADDRESS, this.tOPLACE});
 
-  Floor1Pic.fromJson(Map<String, dynamic> json) {
+  FloorPic.fromJson(Map<String, dynamic> json) {
     pICTUREADDRESS = json['PICTURE_ADDRESS'];
     tOPLACE = json['TO_PLACE'];
   }
@@ -393,24 +355,7 @@ class Floor1Pic {
   }
 }
 
-class Floor2Pic {
-  String pICTUREADDRESS;
-  String tOPLACE;
 
-  Floor2Pic({this.pICTUREADDRESS, this.tOPLACE});
-
-  Floor2Pic.fromJson(Map<String, dynamic> json) {
-    pICTUREADDRESS = json['PICTURE_ADDRESS'];
-    tOPLACE = json['TO_PLACE'];
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['PICTURE_ADDRESS'] = this.pICTUREADDRESS;
-    data['TO_PLACE'] = this.tOPLACE;
-    return data;
-  }
-}
 
 class FloorName {
   String floor1;
@@ -499,21 +444,4 @@ class BxMallSubDto {
   }
 }
 
-class Floor3Pic {
-  String pICTUREADDRESS;
-  String tOPLACE;
 
-  Floor3Pic({this.pICTUREADDRESS, this.tOPLACE});
-
-  Floor3Pic.fromJson(Map<String, dynamic> json) {
-    pICTUREADDRESS = json['PICTURE_ADDRESS'];
-    tOPLACE = json['TO_PLACE'];
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['PICTURE_ADDRESS'] = this.pICTUREADDRESS;
-    data['TO_PLACE'] = this.tOPLACE;
-    return data;
-  }
-}

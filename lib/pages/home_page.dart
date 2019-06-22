@@ -1,23 +1,41 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_shop/model/home/home_page_below_conten.dart';
 import 'package:flutter_shop/model/home/home_page_context.dart';
 import '../service/service_method.dart';
-import 'package:flutter_swiper/flutter_swiper.dart';
 import 'dart:convert';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:url_launcher/url_launcher.dart';
+
+import 'home/ad_banner.dart';
+import 'home/floor_content.dart';
+import 'home/floor_title.dart';
+import 'home/leader_phone.dart';
+import 'home/recommend_widget.dart';
+import 'home/swiper_diy.dart';
+import 'home/top_navigator.dart';
 
 class HomePage extends StatefulWidget {
   @override
   _HomePageState createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin {
+class _HomePageState extends State<HomePage>
+    with AutomaticKeepAliveClientMixin {
   String homePageContent = '正在获取数据';
+  int page = 1;
+  List<HotGoods> hotGoodsList = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _getHotGoods();
+  }
 
   @override
   Widget build(BuildContext context) {
+    var fromData = {'lon': '115.02932', 'lat': '35.76189'};
     return Scaffold(
         body: FutureBuilder(
+      future: request('homePageContext', fromData: fromData),
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           var data = json.decode(snapshot.data.toString());
@@ -30,6 +48,14 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin 
           String leaderImage = homePageContextModel.shopInfo.leaderImage;
           String leaderPhone = homePageContextModel.shopInfo.leaderPhone;
           List<Recommend> recommendList = homePageContextModel.recommend;
+          String floor1Title = homePageContextModel.floor1Pic.pICTUREADDRESS;
+          List<Floor> floor1List = homePageContextModel.floor1;
+
+          String floor2Title = homePageContextModel.floor2Pic.pICTUREADDRESS;
+          List<Floor> floor2List = homePageContextModel.floor2;
+          String floor3Title = homePageContextModel.floor3Pic.pICTUREADDRESS;
+          List<Floor> floor3List = homePageContextModel.floor3;
+
           return SingleChildScrollView(
             child: Column(
               children: <Widget>[
@@ -48,7 +74,26 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin 
                 ),
                 RecommendWidget(
                   recommendList: recommendList,
-                )
+                ),
+                FloorTitle(
+                  pictureAddress: floor1Title,
+                ),
+                FloorContent(
+                  floorList: floor1List,
+                ),
+                FloorTitle(
+                  pictureAddress: floor2Title,
+                ),
+                FloorContent(
+                  floorList: floor2List,
+                ),
+                FloorTitle(
+                  pictureAddress: floor3Title,
+                ),
+                FloorContent(
+                  floorList: floor3List,
+                ),
+                _hotGoods(),
               ],
             ),
           );
@@ -58,201 +103,87 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin 
           );
         }
       },
-      future: getHomePageContent(),
     ));
+  }
+
+  void _getHotGoods() {
+    var fromPage = {'page': page};
+    request('homePageBelowConten', fromData: fromPage).then((value) {
+      HomePageBelowContenModel homePageBelowContenModel =
+          HomePageBelowContenModel.fromJson(json.decode(value));
+      List<HotGoods> newGoodList = homePageBelowContenModel.data;
+
+      setState(() {
+        hotGoodsList.addAll(newGoodList);
+        page++;
+      });
+    });
+  }
+
+  Widget hotTitle = Container(
+    margin: EdgeInsets.only(top: 10),
+    padding: EdgeInsets.all(5),
+    color: Colors.transparent,
+    child: Text('火爆专区'),
+  );
+
+  Widget _wrapList() {
+    if (hotGoodsList.length != 0) {
+      List<Widget> hotListWidget = hotGoodsList.map((item) {
+        return InkWell(
+          onTap: () {},
+          child: Container(
+            width: ScreenUtil().setWidth(372),
+            color: Colors.white,
+            padding: EdgeInsets.all(5),
+            margin: EdgeInsets.only(bottom: 3),
+            child: Column(
+              children: <Widget>[
+                Image.network(
+                  item.image,
+                  width: ScreenUtil().setWidth(370),
+                ),
+                Text(
+                  item.name,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                      color: Colors.pink, fontSize: ScreenUtil().setSp(26)),
+                ),
+                Row(
+                  children: <Widget>[
+                    Text('￥${item.mallPrice}'),
+                    Text(
+                      '￥${item.price}',
+                      style: TextStyle(
+                          color: Colors.black26,
+                          decoration: TextDecoration.lineThrough),
+                    )
+                  ],
+                )
+              ],
+            ),
+          ),
+        );
+      }).toList();
+      return Wrap(
+        children: hotListWidget,
+        spacing: 2,
+      );
+    } else {
+      return Text('');
+    }
+  }
+
+  Widget _hotGoods() {
+    return Container(
+      child: Column(
+        children: <Widget>[hotTitle, _wrapList()],
+      ),
+    );
   }
 
   @override
   // TODO: implement wantKeepAlive
   bool get wantKeepAlive => true;
-}
-
-//首页轮播组件
-class SwiperDiy extends StatelessWidget {
-  final List<Slides> swiperDateList;
-
-  const SwiperDiy({Key key, this.swiperDateList}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: ScreenUtil().setHeight(333),
-      width: ScreenUtil().setWidth(750),
-      child: Swiper(
-        itemCount: swiperDateList.length,
-        itemBuilder: (BuildContext context, int index) {
-          return Image.network(
-            "${swiperDateList[index].image}",
-            fit: BoxFit.fill,
-          );
-        },
-        pagination: SwiperPagination(),
-        autoplay: true,
-      ),
-    );
-  }
-}
-
-//首页gridView
-class TopNavigator extends StatelessWidget {
-  final List<Category> navigatorList;
-
-  const TopNavigator({Key key, this.navigatorList}) : super(key: key);
-
-  Widget _gridViewItem(BuildContext context, Category item) {
-    return InkWell(
-        onTap: () {},
-        child: MediaQuery.removePadding(
-          removeBottom: true,
-          context: context,
-          child: Column(
-            children: <Widget>[
-              Image.network(
-                item.image,
-                width: ScreenUtil().setWidth(95),
-              ),
-              Text(item.mallCategoryName)
-            ],
-          ),
-        ));
-  }
-
-  List<Widget> _gridViews(BuildContext context) {
-    List<Widget> _gridViewsWidget = [];
-    navigatorList.forEach((item) {
-      _gridViewsWidget.add(_gridViewItem(context, item));
-    });
-    return _gridViewsWidget;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    if (this.navigatorList.length > 0)
-      this.navigatorList.removeRange(10, this.navigatorList.length);
-    return Container(
-      height: ScreenUtil().setHeight(320),
-      padding: EdgeInsets.all(3),
-      child: GridView.count(
-          crossAxisCount: 5,
-          padding: EdgeInsets.all(5),
-          children: _gridViews(context)),
-    );
-  }
-}
-
-//广告条
-class AdBanner extends StatelessWidget {
-  final String adPicture;
-
-  const AdBanner({Key key, this.adPicture}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      child: Image.network(adPicture),
-    );
-  }
-}
-
-//店长电话入口
-class LeaderPhone extends StatelessWidget {
-  final String leaderImage;
-  final String leaderPhone;
-
-  const LeaderPhone({Key key, this.leaderImage, this.leaderPhone})
-      : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      child: InkWell(
-        onTap: _launchUrl,
-        child: Image.network(leaderImage),
-      ),
-    );
-  }
-
-  _launchUrl() async {
-    String url = 'tel:' + leaderPhone;
-    if (await canLaunch(url)) {
-      await launch(url);
-    } else {
-      throw 'Could not launch $url';
-    }
-  }
-}
-
-//商品推荐模块
-class RecommendWidget extends StatelessWidget {
-  final List<Recommend> recommendList;
-
-  const RecommendWidget({Key key, this.recommendList}) : super(key: key);
-
-  //头部标题
-  Widget _titleWidget() {
-    return Container(
-      alignment: Alignment.centerLeft,
-      padding: EdgeInsets.fromLTRB(10, 2, 0, 5),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        border: Border(bottom: BorderSide(width: 0.5, color: Colors.black12)),
-      ),
-      child: Text(
-        '商品推荐',
-        style: TextStyle(color: Colors.pink),
-      ),
-    );
-  }
-
-  //商品单独项
-  Widget _item(index) {
-    return InkWell(
-      onTap: () {},
-      child: Container(
-        padding: EdgeInsets.all(8),
-        height: ScreenUtil().setHeight(330),
-        width: ScreenUtil().setWidth(250),
-        decoration: BoxDecoration(
-            color: Colors.white,
-            border:
-                Border(left: BorderSide(width: 0.5, color: Colors.black12))),
-        child: Column(
-          children: <Widget>[
-            Image.network(recommendList[index].image),
-            Text('￥${recommendList[index].mallPrice}'),
-            Text(
-              '￥${recommendList[index].price}',
-              style: TextStyle(
-                  decoration: TextDecoration.lineThrough, color: Colors.grey),
-            )
-          ],
-        ),
-      ),
-    );
-  }
-
-  //横向列表
-  Widget _recommendList() {
-    return Container(
-      height: ScreenUtil().setHeight(350),
-      margin: EdgeInsets.only(top: 10),
-      child: ListView.builder(
-          scrollDirection: Axis.horizontal,
-          itemCount: recommendList.length,
-          itemBuilder: (context, index) {
-            return _item(index);
-          }),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: ScreenUtil().setHeight(430),
-      margin: EdgeInsets.only(top: 10),
-      child: Column(
-        children: <Widget>[_titleWidget(), _recommendList()],
-      ),
-    );
-  }
 }
