@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_shop/model/home/home_page_below_conten.dart';
 import 'package:flutter_shop/model/home/home_page_context.dart';
@@ -23,11 +24,11 @@ class _HomePageState extends State<HomePage>
   String homePageContent = '正在获取数据';
   int page = 1;
   List<HotGoods> hotGoodsList = [];
-
+  GlobalKey<EasyRefreshState> _easyRefreshKey = new GlobalKey<EasyRefreshState>();
+  GlobalKey<RefreshFooterState> _refreshFooterKey = new GlobalKey<RefreshFooterState>();
   @override
   void initState() {
     super.initState();
-    _getHotGoods();
   }
 
   @override
@@ -56,8 +57,19 @@ class _HomePageState extends State<HomePage>
           String floor3Title = homePageContextModel.floor3Pic.pICTUREADDRESS;
           List<Floor> floor3List = homePageContextModel.floor3;
 
-          return SingleChildScrollView(
-            child: Column(
+          return EasyRefresh(
+            refreshFooter: ClassicsFooter(
+              bgColor: Colors.white,
+              textColor: Colors.pink,
+              moreInfoColor: Colors.pink,
+              showMore: true,
+              noMoreText:'',
+              moreInfo: '加载中。。。',
+              loadReadyText: '上拉加载',
+              key: _refreshFooterKey,
+            ),
+            key: _easyRefreshKey,
+            child: ListView(
               children: <Widget>[
                 SwiperDiy(
                   swiperDateList: slides,
@@ -93,9 +105,33 @@ class _HomePageState extends State<HomePage>
                 FloorContent(
                   floorList: floor3List,
                 ),
-                _hotGoods(),
+               _hotGoods()
               ],
             ),
+            loadMore: () async {
+              print('开始加载更多的数据......');
+              var fromPage = {'page': page};
+              await request('homePageBelowConten', fromData: fromPage).then((value) {
+                HomePageBelowContenModel homePageBelowContenModel =
+                HomePageBelowContenModel.fromJson(json.decode(value));
+                List<HotGoods> newGoodList = homePageBelowContenModel.data;
+                setState(() {
+                  hotGoodsList.addAll(newGoodList);
+                  page++;
+                });
+              });
+            },
+            onRefresh: ()async{
+              await request('homePageBelowConten', fromData: 1).then((value) {
+                HomePageBelowContenModel homePageBelowContenModel =
+                HomePageBelowContenModel.fromJson(json.decode(value));
+                List<HotGoods> newGoodList = homePageBelowContenModel.data;
+                setState(() {
+                  hotGoodsList.clear();
+                  hotGoodsList.addAll(newGoodList);
+                });
+              });
+            },
           );
         } else {
           return Center(
@@ -105,21 +141,6 @@ class _HomePageState extends State<HomePage>
       },
     ));
   }
-
-  void _getHotGoods() {
-    var fromPage = {'page': page};
-    request('homePageBelowConten', fromData: fromPage).then((value) {
-      HomePageBelowContenModel homePageBelowContenModel =
-          HomePageBelowContenModel.fromJson(json.decode(value));
-      List<HotGoods> newGoodList = homePageBelowContenModel.data;
-
-      setState(() {
-        hotGoodsList.addAll(newGoodList);
-        page++;
-      });
-    });
-  }
-
   Widget hotTitle = Container(
     margin: EdgeInsets.only(top: 10),
     padding: EdgeInsets.all(5),
