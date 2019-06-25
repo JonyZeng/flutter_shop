@@ -1,6 +1,12 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_shop/model/category/category_goods_list.dart';
 import 'package:flutter_shop/provide/category_goods_provide.dart';
+import 'package:flutter_shop/provide/child_category.dart';
+import 'package:flutter_shop/service/service_method.dart';
 import 'package:provide/provide.dart';
 
 class CategoryGoodsList extends StatefulWidget {
@@ -9,6 +15,12 @@ class CategoryGoodsList extends StatefulWidget {
 }
 
 class _CategoryGoodsListState extends State<CategoryGoodsList> {
+  GlobalKey<EasyRefreshState> _easyRefreshKey =
+      new GlobalKey<EasyRefreshState>();
+  GlobalKey<RefreshFooterState> _refreshFooterKey =
+      new GlobalKey<RefreshFooterState>();
+  var scrollController = new ScrollController();
+
   @override
   void initState() {
     super.initState();
@@ -18,16 +30,40 @@ class _CategoryGoodsListState extends State<CategoryGoodsList> {
   Widget build(BuildContext context) {
     return Provide<CategoryGoodsListProvide>(
       builder: (context, child, data) {
+        try {
+          if (Provide.value<ChildCategoryProvide>(context).page == 1) {
+            scrollController.jumpTo(0.0);
+          }
+        } catch (e) {}
+
         if (data.categoryGoodsListData.length > 0) {
           return Expanded(
             flex: 1,
             child: Container(
               width: ScreenUtil().setWidth(570),
-              child: ListView.builder(
-                itemBuilder: (context, index) {
-                  return _goodsItem(data, index);
+              child: EasyRefresh(
+                refreshFooter: ClassicsFooter(
+                  bgColor: Colors.white,
+                  textColor: Colors.pink,
+                  moreInfoColor: Colors.pink,
+                  showMore: true,
+                  noMoreText:
+                      Provide.value<ChildCategoryProvide>(context).noMoreText,
+                  moreInfo: '加载中。。。',
+                  loadReadyText: '上拉加载',
+                  key: _refreshFooterKey,
+                ),
+                key: _easyRefreshKey,
+                child: ListView.builder(
+                  controller: scrollController,
+                  itemBuilder: (context, index) {
+                    return _goodsItem(data, index);
+                  },
+                  itemCount: data.categoryGoodsListData.length,
+                ),
+                loadMore: () {
+                  _loadMoreGoodsList();
                 },
-                itemCount: data.categoryGoodsListData.length,
               ),
             ),
           );
@@ -107,5 +143,30 @@ class _CategoryGoodsListState extends State<CategoryGoodsList> {
         ),
       ),
     );
+  }
+
+  void _loadMoreGoodsList() async {
+    Provide.value<ChildCategoryProvide>(context).addPage();
+    String categoryId = Provide.value<ChildCategoryProvide>(context).categoryId;
+    String subId = Provide.value<ChildCategoryProvide>(context).subId;
+    int page = Provide.value<ChildCategoryProvide>(context).page;
+    print(
+        '_loadMoreGoodsList()===> categoryId=$categoryId, subId=$subId, page=$page ');
+    var data = {
+      'categoryId': categoryId,
+      'categorySubId': subId == '00' ? '' : subId,
+      'page': page,
+    };
+    await request('getMallGoods', fromData: data).then((value) {
+      var data = json.decode(value);
+      CategoryGoodsListModel categoryGoodsListModel =
+          CategoryGoodsListModel.fromJson(data);
+      if (categoryGoodsListModel.data == null) {
+        Provide.value<ChildCategoryProvide>(context).changeNoMore('没有数据了');
+      } else {
+        Provide.value<CategoryGoodsListProvide>(context)
+            .loadMoreGoodsList(categoryGoodsListModel.data);
+      }
+    });
   }
 }

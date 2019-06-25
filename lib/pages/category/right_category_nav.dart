@@ -46,7 +46,9 @@ class _RightCategoryNavState extends State<RightCategoryNav> {
         : false);
     return InkWell(
       onTap: () {
-        Provide.value<ChildCategoryProvide>(context).changeChildIndex(index);
+        Provide.value<ChildCategoryProvide>(context)
+            .changeChildIndex(index, item.mallSubId);
+
         _getGoodsList(item.mallSubId);
       },
       child: Container(
@@ -62,9 +64,11 @@ class _RightCategoryNavState extends State<RightCategoryNav> {
   }
 
   void _getGoodsList(String categorySubId) async {
+    String categoryId = Provide.value<ChildCategoryProvide>(context).categoryId;
+    print('categoryId=$categoryId,categorySubId=$categorySubId');
     var data = {
-      'categoryId': Provide.value<ChildCategoryProvide>(context).categoryId,
-      'categorySubId': categorySubId,
+      'categoryId': categoryId,
+      'categorySubId': categorySubId == '00' ? "" : categorySubId,
       'page': 1
     };
     await request('getMallGoods', fromData: data).then((value) {

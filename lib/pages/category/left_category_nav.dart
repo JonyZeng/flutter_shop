@@ -49,6 +49,7 @@ class _LeftCategoryNavState extends State<LeftCategoryNav> {
       onTap: () {
         var childList = categoryDataList[index].bxMallSubDto;
         var categoryId = categoryDataList[index].mallCategoryId;
+        print('categoryDataList[$index]===>$categoryId');
         Provide.value<ChildCategoryProvide>(context)
             .getChildCategory(categoryId, childList);
         setState(() {
@@ -84,6 +85,7 @@ class _LeftCategoryNavState extends State<LeftCategoryNav> {
   }
 
   void _getGoodsList({String categoryId}) async {
+    print('_getGoodsList====>$categoryId');
     var data = {
       'categoryId': categoryId == null ? '4' : categoryId,
       'categorySubId': "",
@@ -94,7 +96,7 @@ class _LeftCategoryNavState extends State<LeftCategoryNav> {
       CategoryGoodsListModel categoryGoodsListModel =
           CategoryGoodsListModel.fromJson(data);
       Provide.value<CategoryGoodsListProvide>(context)
-          .getGoodsList(categoryGoodsListModel.data);
+          .getGoodsList(categoryGoodsListModel.data); //数据状态化
     });
   }
 }
