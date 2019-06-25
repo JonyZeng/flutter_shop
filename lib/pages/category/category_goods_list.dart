@@ -8,6 +8,7 @@ import 'package:flutter_shop/provide/category_goods_provide.dart';
 import 'package:flutter_shop/provide/child_category.dart';
 import 'package:flutter_shop/service/service_method.dart';
 import 'package:provide/provide.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class CategoryGoodsList extends StatefulWidget {
   @override
@@ -162,6 +163,14 @@ class _CategoryGoodsListState extends State<CategoryGoodsList> {
       CategoryGoodsListModel categoryGoodsListModel =
           CategoryGoodsListModel.fromJson(data);
       if (categoryGoodsListModel.data == null) {
+        print('没有数据了');
+        Fluttertoast.showToast(
+            msg: '没有更多数据了',
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            backgroundColor: Colors.pink,
+            textColor: Colors.white,
+            fontSize: 16);
         Provide.value<ChildCategoryProvide>(context).changeNoMore('没有数据了');
       } else {
         Provide.value<CategoryGoodsListProvide>(context)
