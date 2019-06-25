@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_shop/model/category/category_goods_list.dart';
 import 'package:flutter_shop/provide/category_goods_provide.dart';
 import 'package:provide/provide.dart';
-
 
 class CategoryGoodsList extends StatefulWidget {
   @override
@@ -11,7 +9,6 @@ class CategoryGoodsList extends StatefulWidget {
 }
 
 class _CategoryGoodsListState extends State<CategoryGoodsList> {
-
   @override
   void initState() {
     super.initState();
@@ -19,32 +16,41 @@ class _CategoryGoodsListState extends State<CategoryGoodsList> {
 
   @override
   Widget build(BuildContext context) {
-    return
-      Provide<CategoryGoodsListProvide>(
-        builder: (context,child,data){
-          return   Container(
-            width: ScreenUtil().setWidth(570),
-            height: ScreenUtil().setHeight(970),
-            child: ListView.builder(
-              itemBuilder: (context, index) {
-                return _goodsItem(data,index);
-              },
-              itemCount: data.categoryGoodsListData.length,
+    return Provide<CategoryGoodsListProvide>(
+      builder: (context, child, data) {
+        if (data.categoryGoodsListData.length > 0) {
+          return Expanded(
+            flex: 1,
+            child: Container(
+              width: ScreenUtil().setWidth(570),
+              child: ListView.builder(
+                itemBuilder: (context, index) {
+                  return _goodsItem(data, index);
+                },
+                itemCount: data.categoryGoodsListData.length,
+              ),
             ),
           );
-        },
-      );
-
+        } else {
+          return Expanded(
+            child: Center(
+              child: Text('商品正在赶来.....'),
+            ),
+            flex: 1,
+          );
+        }
+      },
+    );
   }
 
-  Widget _goodsImage(data,index) {
+  Widget _goodsImage(data, index) {
     return Container(
       width: ScreenUtil().setWidth(200),
       child: Image.network(data.categoryGoodsListData[index].image),
     );
   }
 
-  Widget _goodsName(data,index) {
+  Widget _goodsName(data, index) {
     return Container(
       width: ScreenUtil().setWidth(320),
       child: Text(
@@ -56,7 +62,7 @@ class _CategoryGoodsListState extends State<CategoryGoodsList> {
     );
   }
 
-  Widget _goodPrice(data,index) {
+  Widget _goodPrice(data, index) {
     return Container(
       width: ScreenUtil().setWidth(320),
       margin: EdgeInsets.only(top: 20),
@@ -79,7 +85,7 @@ class _CategoryGoodsListState extends State<CategoryGoodsList> {
     );
   }
 
-  Widget _goodsItem(data,index) {
+  Widget _goodsItem(data, index) {
     return InkWell(
       onTap: () {},
       child: Container(
@@ -90,9 +96,12 @@ class _CategoryGoodsListState extends State<CategoryGoodsList> {
                 Border(bottom: BorderSide(width: 1, color: Colors.black12))),
         child: Row(
           children: <Widget>[
-            _goodsImage(data,index),
+            _goodsImage(data, index),
             Column(
-              children: <Widget>[_goodsName(data,index), _goodPrice(data,index)],
+              children: <Widget>[
+                _goodsName(data, index),
+                _goodPrice(data, index)
+              ],
             )
           ],
         ),

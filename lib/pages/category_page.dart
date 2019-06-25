@@ -23,7 +23,7 @@ class _CategoryPageState extends State<CategoryPage> {
       ),
       body: Container(
         child: Row(
-          children: <Widget>[
+        children: <Widget>[
             LeftCategoryNav(),
             Column(
               children: <Widget>[RightCategoryNav(), CategoryGoodsList()],
