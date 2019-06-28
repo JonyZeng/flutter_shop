@@ -6,6 +6,7 @@ import 'package:provide/provide.dart';
 import 'details/detail_top_area.dart';
 import 'details/details_explain.dart';
 import 'details/details_tabbar.dart';
+import 'details/details_web.dart';
 
 class DetailsPage extends StatelessWidget {
   final String goodsId;
@@ -26,19 +27,17 @@ class DetailsPage extends StatelessWidget {
       body: FutureBuilder(
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            return SingleChildScrollView(
-              scrollDirection: Axis.vertical,
-              child: Container(
-                child: Column(
-                  children: <Widget>[
-                    DetailsTopArea(),
-                    DetailsExplain(),
-                    DetailsTabBar(),
-                  ],
-                ),
+            return Container(
+              child: ListView(
+                children: <Widget>[
+                  DetailsTopArea(),
+                  DetailsExplain(),
+                  DetailsTabBar(),
+                  DetailsWeb(),
+                ],
               ),
             );
-          }else{
+          } else {
             return Center(
               child: Text('正在加载界面。。。。'),
             );
