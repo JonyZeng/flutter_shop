@@ -1,5 +1,5 @@
 
-//广告条
+//15分钟送达广告条
 import 'package:flutter/material.dart';
 
 class AdBanner extends StatelessWidget {

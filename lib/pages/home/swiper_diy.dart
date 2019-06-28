@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_shop/model/home/home_page_context.dart';
+import 'package:flutter_shop/routers/application.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
 
 class SwiperDiy extends StatelessWidget {
@@ -17,9 +18,15 @@ class SwiperDiy extends StatelessWidget {
       child: Swiper(
         itemCount: swiperDateList.length,
         itemBuilder: (BuildContext context, int index) {
-          return Image.network(
-            "${swiperDateList[index].image}",
-            fit: BoxFit.fill,
+          return InkWell(
+            onTap: () {
+              Application.router.navigateTo(
+                  context, '/detail?id=${swiperDateList[index].goodsId}');
+            },
+            child: Image.network(
+              "${swiperDateList[index].image}",
+              fit: BoxFit.fill,
+            ),
           );
         },
         pagination: SwiperPagination(),
