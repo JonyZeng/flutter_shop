@@ -4,6 +4,7 @@ import 'package:flutter_shop/provide/details_info.dart';
 import 'package:provide/provide.dart';
 
 import 'details/detail_top_area.dart';
+import 'details/details_bottom.dart';
 import 'details/details_explain.dart';
 import 'details/details_tabbar.dart';
 import 'details/details_web.dart';
@@ -27,15 +28,25 @@ class DetailsPage extends StatelessWidget {
       body: FutureBuilder(
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            return Container(
-              child: ListView(
-                children: <Widget>[
-                  DetailsTopArea(),
-                  DetailsExplain(),
-                  DetailsTabBar(),
-                  DetailsWeb(),
-                ],
-              ),
+            return Stack(
+              children: <Widget>[
+                Container(
+                  margin: EdgeInsets.only(bottom: 40),
+                  child: ListView(
+                    children: <Widget>[
+                      DetailsTopArea(),
+                      DetailsExplain(),
+                      DetailsTabBar(),
+                      DetailsWeb(),
+                    ],
+                  ),
+                ),
+                Positioned(
+                  child: DetailsBottom(),
+                  bottom: 0,
+                  left: 0,
+                )
+              ],
             );
           } else {
             return Center(
