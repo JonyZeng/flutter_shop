@@ -57,7 +57,7 @@ class RecommendWidget extends StatelessWidget {
   //横向列表
   Widget _recommendList() {
     return Container(
-      height: ScreenUtil().setHeight(800),
+      height: ScreenUtil().setHeight(300),
       margin: EdgeInsets.only(top: 10),
       child: ListView.builder(
           scrollDirection: Axis.horizontal,
@@ -71,7 +71,6 @@ class RecommendWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: ScreenUtil().setHeight(900),
       margin: EdgeInsets.only(top: 10),
       child: Column(
         children: <Widget>[_titleWidget(), _recommendList()],
