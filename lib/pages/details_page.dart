@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_shop/provide/details_info.dart';
+import 'package:flutter_shop/provide/details_info_provide.dart';
 import 'package:provide/provide.dart';
 
 import 'details/detail_top_area.dart';

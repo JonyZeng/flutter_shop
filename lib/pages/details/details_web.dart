@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_shop/provide/details_info.dart';
+import 'package:flutter_shop/provide/details_info_provide.dart';
 import 'package:provide/provide.dart';
 import 'package:flutter_html/flutter_html.dart';
 
@@ -12,7 +12,7 @@ class DetailsWeb extends StatelessWidget {
         .data
         .goodInfo
         .goodsDetail;
-    print(goodsDetails);
+//    print(goodsDetails);
     String web =
         "<div><img src=\"http://images.baixingliangfan.cn/shopGoodsDetailImg/20171224/20171224081109_5060.jpg\"/></div>";
     return Provide<DetailsInfoProvide>(

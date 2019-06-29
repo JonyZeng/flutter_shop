@@ -3,7 +3,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_shop/model/home/home_page_context.dart';
-import 'package:flutter_shop/routers/application.dart';
 
 class TopNavigator extends StatelessWidget {
   final List<Category> navigatorList;

@@ -5,7 +5,7 @@ import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_shop/model/category/category_goods_list.dart';
 import 'package:flutter_shop/provide/category_goods_provide.dart';
-import 'package:flutter_shop/provide/child_category.dart';
+import 'package:flutter_shop/provide/child_category_provide.dart';
 import 'package:flutter_shop/service/service_method.dart';
 import 'package:provide/provide.dart';
 import 'package:fluttertoast/fluttertoast.dart';

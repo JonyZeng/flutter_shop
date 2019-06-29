@@ -33,6 +33,7 @@ class _HomePageState extends State<HomePage>
   }
 
   @override
+  // ignore: must_call_super
   Widget build(BuildContext context) {
     var fromData = {'lon': '115.02932', 'lat': '35.76189'};
     return Scaffold(
