@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_shop/provide/details_info.dart';
 import 'package:provide/provide.dart';
 
