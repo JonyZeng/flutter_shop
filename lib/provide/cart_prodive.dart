@@ -29,14 +29,15 @@ class CartProvide with ChangeNotifier {
         'count': count,
         'price': price,
         'images': images,
+        'isCheck': true,
       };
       ival = 0;
       tempList.add(newGoods);
       cartInfoList.add(CartInfoModel.fromJson(newGoods));
     }
     cartString = json.encode(tempList).toString();
-    print('数据。。。。。$cartString');
-    print('模型。。。。。$cartInfoList.');
+//    print('数据。。。。。$cartString');
+//    print('模型。。。。。$cartInfoList.');
     preferences.setString('cartInfo', cartString);
     notifyListeners();
   }
@@ -60,9 +61,28 @@ class CartProvide with ChangeNotifier {
       tempList.forEach((item) {
         print('$item');
         cartInfoList.add(CartInfoModel.fromJson(item));
-
       });
     }
     notifyListeners();
+  }
+
+  //删除购物车单个商品
+  delCartGoodsByGoodsId(String goodsId) async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    cartString = preferences.getString('cartInfo');
+    var tempList = (json.decode(cartString.toString()) as List).cast();
+    int tempIndex = 0;
+    int delIndex = 0;
+    tempList.forEach((item) {
+      if (item['goodsId'] == goodsId) {
+        delIndex = tempIndex;
+      }
+      tempIndex++;
+    });
+
+    tempList.removeAt(delIndex);
+    cartString = json.encode(tempList).toString();
+    preferences.setString('cartInfo', cartString);
+    await getCartInfo();
   }
 }
