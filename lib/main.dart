@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_shop/pages/index_page.dart';
 import 'package:flutter_shop/provide/cart_prodive.dart';
 import 'package:flutter_shop/provide/category_goods_provide.dart';
+import 'package:flutter_shop/provide/current_index_provide.dart';
 import 'package:flutter_shop/provide/details_info_provide.dart';
 import 'package:provide/provide.dart';
 import './provide/counter_provide.dart';
@@ -17,6 +18,7 @@ void main() {
   var categoryGoodsListProvide = CategoryGoodsListProvide();
   var detailsInfoProvide = DetailsInfoProvide();
   var cartProvide = CartProvide();
+  var currentIndexProvide = CurrentIndexProvide();
 
   providers
     ..provide(Provider<Counter>.value(counter))
@@ -24,6 +26,7 @@ void main() {
     ..provide(
         Provider<CategoryGoodsListProvide>.value(categoryGoodsListProvide))
     ..provide(Provider<DetailsInfoProvide>.value(detailsInfoProvide))
+    ..provide(Provider<CurrentIndexProvide>.value(currentIndexProvide))
     ..provide(Provider<CartProvide>.value(cartProvide));
 
   runApp(ProviderNode(child: MyApp(), providers: providers));
