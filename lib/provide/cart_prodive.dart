@@ -9,6 +9,7 @@ class CartProvide with ChangeNotifier {
 
   double allPrice = 0;
   int allGoodsCount = 0;
+  bool isAllCheck = true;
 
   save(goodsId, goodsName, count, price, images) async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
@@ -59,12 +60,15 @@ class CartProvide with ChangeNotifier {
       cartInfoList = [];
     } else {
       allPrice = 0;
-      allGoodsCount=0;
+      allGoodsCount = 0;
+      isAllCheck = true;
       List<Map> tempList = (json.decode(cartString.toString()) as List).cast();
       tempList.forEach((item) {
-        if(item['isCheck']){
-          allPrice += item['count']*item['price'];
-          allGoodsCount+=item['count'];
+        if (item['isCheck']) {
+          allPrice += item['count'] * item['price'];
+          allGoodsCount += item['count'];
+        } else {
+          isAllCheck = false;
         }
         cartInfoList.add(CartInfoModel.fromJson(item));
       });
@@ -87,6 +91,65 @@ class CartProvide with ChangeNotifier {
     });
 
     tempList.removeAt(delIndex);
+    cartString = json.encode(tempList).toString();
+    preferences.setString('cartInfo', cartString);
+    await getCartInfo();
+  }
+
+  //选中状态的改变
+  changeCheckState(CartInfoModel cartItem) async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    cartString = preferences.getString('cartInfo');
+    List<Map> tempList = (json.decode(cartString.toString()) as List).cast();
+    int tempIndex = 0;
+    int changedIndex = 0;
+    tempList.forEach((item) {
+      if (item['goodsId'] == cartItem.goodsId) {
+        changedIndex = tempIndex;
+      }
+      tempIndex++;
+    });
+    tempList[changedIndex] = cartItem.toJson();
+    cartString = json.encode(tempList).toString();
+    preferences.setString('cartInfo', cartString);
+    await getCartInfo();
+  }
+
+  //全选状态改变
+  changeAllCheckBtnCheck(bool isCheck) async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    cartString = preferences.getString('cartInfo');
+    List<Map> tempList = (json.decode(cartString.toString()) as List).cast();
+    List<Map> newList = [];
+    for (var item in tempList) {
+      var newItem = item;
+      newItem['isCheck'] = isCheck;
+      newList.add(newItem);
+    }
+    cartString = json.encode(tempList).toString();
+    preferences.setString('cartInfo', cartString);
+    await getCartInfo();
+  }
+
+  //商品数量增加或减少
+  addOrReduceAction(CartInfoModel cartItem, String todo) async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    cartString = preferences.getString('cartInfo');
+    List<Map> tempList = (json.decode(cartString.toString()) as List).cast();
+    int tempIndex = 0;
+    int changeIndex = 0;
+    tempList.forEach((item) {
+      if (item['goodsId'] == cartItem.goodsId) {
+        changeIndex = tempIndex;
+      }
+      tempIndex++;
+    });
+    if (todo == 'add') {
+      cartItem.count++;
+    } else if (cartItem.count > 1) {
+      cartItem.count--;
+    }
+    tempList[changeIndex] = cartItem.toJson();
     cartString = json.encode(tempList).toString();
     preferences.setString('cartInfo', cartString);
     await getCartInfo();
